@@ -1,48 +1,81 @@
 #include <iostream>
 #include <string>
+#include <vector>
+#include <fstream>
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 using namespace std;
 
 
+void tomi_hash(vector<char> caracteres) {
+    srand(2004);
+    std::vector<char> palabra_hasheada;
+    for (int i = 0; i < 25 ; i++) {
+        int num = rand() % 126 + 32;
+        if (int(caracteres[i]) > num) {       
+            palabra_hasheada.push_back(char(int(caracteres[i]) - num +32 ));           
+        } else {
+            palabra_hasheada.push_back(char(num - int(caracteres[i])+32));         
+        }   
+    }
 
-
-int main ()
-{
-
-    
-    int option;
-
-    do {
-        cout << "Escoja una opción: " << endl;
-
-        cout << "1.- Para un texto.\n";
-        cout << "2.- Para un archivo de texto de N líneas.\n";
-        cin >> option;
-        switch (option)
-        {
+    string palabra;
+    for (int i = 0; i < 25; i++) {
+        palabra += palabra_hasheada[i];
         
-            case 1:
-                cout << "Opcion 1.\n";
-                break;
-            
-            case 2:
-                cout << "Opcion 2.\n";
-                break;
+    }
+    cout << palabra << "\n";
 
-            case 0:
-                cout << "Finalizo este programa.\n";
+}
+
+void es_archivo(string nombre, string extension){
+    string archivo = nombre + "." +extension;
+    string linea;
+    cout << archivo << "\n";
+    ifstream f(archivo.c_str());
+    while (getline(f, linea)) {
+        std::vector<char> cantidad;
+        for (int i = 0; i < linea.length() ; i++) {
+            cantidad.push_back(linea[i]);
         }
-    } while (option != 0);
-     
-    
+        // Lo vamos imprimiendo
+        tomi_hash(cantidad);
+    }
+}
 
+void no_archivo(string texto) {
+    std::vector<char> cantidad;
+    for (int i = 0; i < texto.length() ; i++) {
+        cantidad.push_back(texto[i]);
+    }
+
+    if (cantidad.size() < 25) {
+        for (int i = 0; i < (25 - texto.size()); i ++) {
+            cantidad.push_back(texto[i%texto.length()]);
+        }
+
+    } else {
+        while (cantidad.size() > 25) {
+            cantidad.pop_back();
+        }
+    }
+    cout << cantidad.size() << "\n";
+    tomi_hash(cantidad);
     
     
     
-    //srand (time(NULL));
-    //int v1;
-    //v1 = rand() % 100;
-    //cout <<  v1 << "\n";
+}
+
+int main (int argc, char *argv[])
+{
+    if(argc!=2) {
+        es_archivo(argv[1], argv[2]);
+    } else if (argc == 2) {
+        no_archivo(argv[1]);
+    } else {
+        cout << "ERROR" << "\n";
+    }
+    
+    
     return 0;
 }
