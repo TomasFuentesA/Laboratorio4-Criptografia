@@ -2,10 +2,14 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <chrono>
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 #include <ctime>
 #include <math.h>       /*¨log2*/
+#include "sha1.hpp"
+#include "sha256.h"
+#include "md5.h"
 using namespace std;
 
 
@@ -15,6 +19,27 @@ void entropia(string palabra) {
     int n = 126-33;
     int e = l*log2(n);
     cout << e << '\n';
+}
+
+void Sha1(string palabra) {
+    SHA1 checksum;
+    checksum.update(palabra);
+    const string hash = checksum.final();
+    cout << "SHA1: " << hash << " | ";
+    entropia(hash);
+}
+
+void Sha256(string palabra) {
+    string output1 = sha256(palabra);
+ 
+    cout << "SHA256: " << output1 << " | ";
+    entropia(output1);
+}
+
+void Md5(string palabra) {
+    string output = md5(palabra);
+    cout << "MD5': " << output << " | ";
+    entropia(output);
 }
 
 /*************************
@@ -44,8 +69,7 @@ void tomi_hash(vector<char> caracteres) {
             } else {
                 palabra_hasheada.push_back(char(int(caracteres[i]) - num +32 ));   
             }
-                  
-                    
+                                   
         } else {
             
             if ( (num - int(caracteres[i])+32 < 33) ||  (num - int(caracteres[i])+32 > 126) ) {
@@ -65,7 +89,7 @@ void tomi_hash(vector<char> caracteres) {
         
     }
     cout << palabra << " | ";
-
+    entropia(palabra);
 }
 
 /*************************
@@ -82,24 +106,34 @@ void es_archivo(string nombre, string extension){
     string linea;
     ifstream f(archivo.c_str());
     while (getline(f, linea)) {
-        std::vector<char> cantidad;
-        for (long unsigned int i = 0; i < linea.length() ; i++) {
-            cantidad.push_back(linea[i]);
-        }
-
-        if (cantidad.size() < 25) {
-        for (long unsigned int i = 0; i < (25 - linea.size()); i ++) {
-            cantidad.push_back(linea[i%linea.length()]);
-        }
-
+        
+        Md5(linea);
+        Sha1(linea);
+        Sha256(linea);
+        if (linea == ""){
+            continue;
         } else {
-            while (cantidad.size() > 25) {
-                cantidad.pop_back();
+            std::vector<char> cantidad;
+            for (long unsigned int i = 0; i < linea.length() ; i++) {
+                cantidad.push_back(linea[i]);
             }
+
+            if (cantidad.size() < 25) {
+            for (long unsigned int i = 0; i < (25 - linea.size()); i ++) {
+                cantidad.push_back(linea[i%linea.length()]);
+            }
+
+            } else {
+                while (cantidad.size() > 25) {
+                    cantidad.pop_back();
+                }
+            }
+            // Lo vamos imprimiendo
+            
+            tomi_hash(cantidad);
+            
+    
         }
-        // Lo vamos imprimiendo
-        tomi_hash(cantidad);
-        entropia(linea);
     }
 }
 
@@ -131,14 +165,15 @@ void no_archivo(string texto) {
         }
     }
     tomi_hash(cantidad);
-    entropia(texto);
-    
+    Sha1(texto);
+    Sha256(texto);
+    Md5(texto);
     
 }
 
 int main (int argc, char *argv[])
 {
-    
+    auto begin = std::chrono::high_resolution_clock::now();
     //En el main se detecta si es un archivo o un string simple
     if(argc!=2) {
         es_archivo(argv[1], argv[2]); 
@@ -148,7 +183,11 @@ int main (int argc, char *argv[])
     } else {
         cout << "ERROR" << "\n";
     }
-    
-    
+
+    auto end = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+
+    printf("Time measured: %.3f seconds.\n", elapsed.count() * 1e-9);
+
     return 0;
 }
