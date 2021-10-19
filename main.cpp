@@ -5,8 +5,17 @@
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 #include <ctime>
+#include <math.h>       /*¨log2*/
 using namespace std;
 
+
+
+void entropia(string palabra) {
+    int l = palabra.length();
+    int n = 126-33;
+    int e = l*log2(n);
+    cout << e << '\n';
+}
 
 /*************************
 La funcion tomi_hash toma el string
@@ -55,7 +64,7 @@ void tomi_hash(vector<char> caracteres) {
         palabra += palabra_hasheada[i];
         
     }
-    cout << palabra << "\n";
+    cout << palabra << " | ";
 
 }
 
@@ -90,6 +99,7 @@ void es_archivo(string nombre, string extension){
         }
         // Lo vamos imprimiendo
         tomi_hash(cantidad);
+        entropia(linea);
     }
 }
 
@@ -121,7 +131,7 @@ void no_archivo(string texto) {
         }
     }
     tomi_hash(cantidad);
-    
+    entropia(texto);
     
     
 }
