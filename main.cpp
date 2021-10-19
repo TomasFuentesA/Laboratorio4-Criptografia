@@ -107,9 +107,9 @@ void es_archivo(string nombre, string extension){
     ifstream f(archivo.c_str());
     while (getline(f, linea)) {
         
-        Md5(linea);
-        Sha1(linea);
-        Sha256(linea);
+        //Md5(linea);
+        //Sha1(linea);
+        //Sha256(linea);
         if (linea == ""){
             continue;
         } else {
