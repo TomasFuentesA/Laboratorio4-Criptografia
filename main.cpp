@@ -13,6 +13,11 @@
 using namespace std;
 
 
+void entropia16(string palabra) {
+    int l = palabra.length();
+    int e = l*log2(16);
+    cout << e << '\n';
+}
 
 void entropia(string palabra) {
     int l = palabra.length();
@@ -26,20 +31,20 @@ void Sha1(string palabra) {
     checksum.update(palabra);
     const string hash = checksum.final();
     cout << "SHA1: " << hash << " | ";
-    entropia(hash);
+    entropia16(hash);
 }
 
 void Sha256(string palabra) {
     string output1 = sha256(palabra);
  
     cout << "SHA256: " << output1 << " | ";
-    entropia(output1);
+    entropia16(output1);
 }
 
 void Md5(string palabra) {
     string output = md5(palabra);
     cout << "MD5': " << output << " | ";
-    entropia(output);
+    entropia16(output);
 }
 
 /*************************
@@ -165,9 +170,9 @@ void no_archivo(string texto) {
         }
     }
     tomi_hash(cantidad);
-    Sha1(texto);
-    Sha256(texto);
-    Md5(texto);
+    //Sha1(texto);
+    //Sha256(texto);
+    //Md5(texto);
     
 }
 
