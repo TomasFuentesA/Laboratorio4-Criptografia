@@ -59,7 +59,7 @@ Una vez obtenido el digito nuevo, se procede a calcular su caracter asociado y s
 Al string "Hasheado"
 **************************/
 
-void tomi_hash(vector<char> caracteres) {
+string tomi_hash(vector<char> caracteres) {
     time_t ttime = time(0);
     tm *local_time = localtime(&ttime);
     srand(local_time->tm_hour*60);
@@ -93,8 +93,8 @@ void tomi_hash(vector<char> caracteres) {
         palabra += palabra_hasheada[i];
         
     }
-    cout << palabra << " | ";
-    entropia(palabra);
+    return palabra;
+    
 }
 
 /*************************
@@ -107,6 +107,9 @@ De derecha a izquierda.
 **************************/
 
 void es_archivo(string nombre, string extension){
+    ofstream salida;
+    salida.open("salida.txt");
+    salida << "*********Entrada********* | **********Hash***********\n"; 
     string archivo = nombre + "." +extension;
     string linea;
     ifstream f(archivo.c_str());
@@ -134,12 +137,16 @@ void es_archivo(string nombre, string extension){
                 }
             }
             // Lo vamos imprimiendo
+            string hash = tomi_hash(cantidad);
+            salida << linea << " | " << hash << "\n";
+            cout << hash << " | ";
+            entropia(hash);
             
-            tomi_hash(cantidad);
             
     
         }
     }
+    salida.close();
 }
 
 /*************************
@@ -169,7 +176,9 @@ void no_archivo(string texto) {
             cantidad.pop_back();
         }
     }
-    tomi_hash(cantidad);
+    string hash = tomi_hash(cantidad);
+    cout << hash << " | ";
+    entropia(hash);
     //Sha1(texto);
     //Sha256(texto);
     //Md5(texto);
